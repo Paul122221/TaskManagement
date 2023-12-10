@@ -1,0 +1,169 @@
+{
+	"info": {
+		"_postman_id": "b5c78e39-b506-4f43-9b6d-32cd92f96419",
+		"name": "TaskManagment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Task",
+			"item": [
+				{
+					"name": "get",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"22222\",\n    \"creationDateTime\": \"2023-12-08T19:57:10.558208\",\n    \"dueDateTime\": null,\n    \"completionDateTime\": \"2023-12-08T19:57:10.558208\",\n    \"status\": null\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8087/api/tasks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8087",
+							"path": [
+								"api",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "put",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"3333\",\n    \"creationDateTime\": \"2023-12-08T19:57:10.558208\",\n    \"dueDateTime\": null,\n    \"completionDateTime\": \"2023-12-08T19:57:10.558208\",\n    \"status\": null\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8087/api/tasks/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8087",
+							"path": [
+								"api",
+								"tasks",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "patch",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"completionDateTime\": \"2023-12-08T19:57:10.558208\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8087/api/tasks/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8087",
+							"path": [
+								"api",
+								"tasks",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addWithStatus",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"22222\",\n    \"creationDateTime\": \"2023-12-08T19:57:10.558208\",\n    \"dueDateTime\": null,\n    \"completionDateTime\": \"2023-12-08T19:57:10.558208\",\n    \"status\": null\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8087/api/tasks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8087",
+							"path": [
+								"api",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getByStatusId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

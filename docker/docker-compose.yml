@@ -1,0 +1,31 @@
+version: "3"
+
+# Before starting I have to check names of network and i have to switch for example from "default" to newapp
+
+services:
+
+  task-service:
+    build:
+      dockerfile: ./docker/.docker/common-service/Dockerfile
+      context: ../
+      args:
+        PATH_TO_JAR: "target"
+    container_name: task-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker # for application-docker.yml
+    ports:
+      - "8087:8087"
+    networks:
+      default:
+        ipv4_address: 192.168.11.57
+
+
+
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.11.0/24
