@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+/**
+ * The TaskMapperJpaImpl class is responsible for mapping domain-level Task objects to their corresponding JPA entity JpaTask objects.
+ */
 @Component
 @Slf4j
 public class TaskMapperJpaImpl implements TaskMapper{

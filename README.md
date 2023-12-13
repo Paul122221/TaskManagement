@@ -23,34 +23,50 @@ sh bash/launchtests.sh
 
 Additionally, a Postman collection file is provided for testing various methods:
 ```
-/postman/TaskManagment.postman_collection.json
+/postman/111TaskManagment.postman_collection.json
 ```
 
 ## Personal Comments
 
-Due to limited time, there might be some unfinished areas and unresolved issues. However, the main requirements have been addressed. Potential improvements include:
+#### 1. Data Validation
+Implemented intuitive data validation based on specific requirements, which can be modified via configuration. The key validations include:
+- Prohibiting the creation/modification of a Task with a past dueDateTime and a status of NOT_DONE.
+- Prohibiting the creation/modification of a Task with a future dueDateTime and a status of PAST_DUE.
+- Prohibiting the creation/modification of a Task without a description or status through the controller.
+- Prohibiting the modification of a Task if it's PAST_DUE or DONE.
+- Prohibiting the creation/modification of a Task with a status of Done and a CompletionDateTime in the future.
+- Additional requirements can be implemented in the future.
 
-1. Replace `int count` with `Pageable` in `TaskRepository.findByStatusAndDueDateTimeBefore(TaskStatus status, LocalDateTime currentTime, int count)`.
+Validation is handled by the interface `com.tasks.taskmanagement.domain.validator.TaskValidator`.
 
-2. Add pagination to controller methods for fetching entries, to avoid potential `OutOfMemory` issues.
+#### 2. Testing
+Several tests have been created for validating these rules, located in:
+`com.tasks.integration.taskmanagement.presentation.controller.TaskControllerTest`
 
-3. Implement metrics using Spring Actuator.
+Additional unit and integration tests are also included in the system.
 
-4. Add appenders for logging to external storage, and make it asynchronous for better performance.
+#### 3. Task Status Updates
+Task status updates can be configured in `application.properties`, allowing the user to specify the number of tasks updated at a time and the schedule for updates. For example:
+- Task update cron: `*/60 * * * * *` (every 60 seconds)
+- Update type: `custom`
+- Batch size: `10000`
 
-5. Increase test coverage for more business logic, although several unit and integration tests have been developed.
+Updates are handled by `com.tasks.taskmanagement.application.spring.service.statusupdate.TaskStatusUpdateSchedulerImpl`.
 
-6. Create a more universal controller for data filtering, not limited to status.
+#### 4. Pagination
+Implemented pagination using the classes `com.tasks.taskmanagement.domain.valueobject.IPage` and `com.tasks.taskmanagement.domain.valueobject.IPageable`. These are converted into standard Spring classes at the service level. Further improvements could include writing an adapter and moving it to a separate common DDD module.
 
-7. Improve code style and formatting.
+#### 5. Docker Support
+Added a `docker-compose.yml` and `Dockerfile` for container deployment. The entire process can be launched using the script `bash/launchdocker.sh`.
 
-8. Prepare a glossary for common terms, e.g., defining 'Task' as 'ToDo'.
+#### 6. Future Improvements
+There are numerous areas for potential improvement, including:
+- Making the project more extensible, such as adding more status types.
+- Considering the adoption of Event Sourcing for task management stages, similar to systems like Jira.
+- Various other enhancements.
+- I also didn't have time to implement validation when filtering by status.
 
-9. Ensure compliance with REST API standards.
-
-10. Verify code extendibility.
-
-Other tasks and improvements are also planned but yet to be implemented.
+This initial version is provided as a basis for further development and improvement.
 
 ## API Methods Description
 
@@ -58,7 +74,7 @@ This RESTful API provides access to task management functionalities. All methods
 
 ### Get Task List
 
-**Method**: `GET /api/tasks/`
+**Method**: `GET /api/tasks`
 
 **Description**: Returns a list of all tasks or filters tasks by status if the "status" parameter is provided.
 
@@ -124,7 +140,7 @@ This RESTful API provides access to task management functionalities. All methods
 
 ### Delete All Tasks
 
-**Method**: `DELETE /api/tasks/`
+**Method**: `DELETE /api/tasks`
 
 **Description**: Deletes all tasks.
 

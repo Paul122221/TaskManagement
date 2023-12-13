@@ -7,11 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-
-
+/**
+ * Implementation of the TaskMapper interface for mapping between Task entities and TaskDto objects.
+ */
 @Component
 @Slf4j
-public class TaskMapperImpl implements TaskMapper{
+public class TaskMapperImpl implements TaskMapper {
 
     private final TaskService taskService;
 
@@ -20,14 +21,26 @@ public class TaskMapperImpl implements TaskMapper{
         this.taskService = taskService;
     }
 
-    public Task createFrom(TaskDto taskPatchRequest){
+    /**
+     * Creates a Task entity from a TaskDto object.
+     *
+     * @param taskPatchRequest The TaskDto object to create the Task entity from.
+     * @return The created Task entity.
+     */
+    public Task createFrom(TaskDto taskPatchRequest) {
         Task task = taskService.newEntity();
         patchFromDto(task, taskPatchRequest);
         log.info("Created Task from TaskDto: {}", task);
         return task;
     }
 
-    public void updateFromDto(Task task, TaskDto taskPatchRequest){
+    /**
+     * Updates a Task entity based on the data in a TaskDto object.
+     *
+     * @param task             The Task entity to update.
+     * @param taskPatchRequest The TaskDto object containing the updated data.
+     */
+    public void updateFromDto(Task task, TaskDto taskPatchRequest) {
         task.setDescription(taskPatchRequest.getDescription());
         task.setCreationDateTime(taskPatchRequest.getCreationDateTime());
         task.setDueDateTime(taskPatchRequest.getDueDateTime());
@@ -36,7 +49,13 @@ public class TaskMapperImpl implements TaskMapper{
         log.info("Updated Task from TaskDto: {}", task);
     }
 
-    public void patchFromDto(Task task, TaskDto taskPatchRequest){
+    /**
+     * Patches a Task entity based on the data in a TaskDto object.
+     *
+     * @param task             The Task entity to patch.
+     * @param taskPatchRequest The TaskDto object containing the data for patching.
+     */
+    public void patchFromDto(Task task, TaskDto taskPatchRequest) {
         if (taskPatchRequest.getId() != null) {
             task.setId(taskPatchRequest.getId());
         }
@@ -57,5 +76,4 @@ public class TaskMapperImpl implements TaskMapper{
         }
         log.info("Patched Task from TaskDto: {}", task);
     }
-
 }

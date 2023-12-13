@@ -2,6 +2,7 @@ package com.tasks.unit.taskmanagement.application.spring.service.statusupdate;
 
 import com.tasks.taskmanagement.application.spring.service.statusupdate.PastDueStatusUpdateStrategy;
 import com.tasks.taskmanagement.domain.entity.Task;
+import com.tasks.taskmanagement.domain.valueobject.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -38,6 +39,7 @@ public class PastDueStatusUpdateStrategyTest {
     void shouldUpdate_ReturnsTrue_WhenDueDateTimeIsPastDue() {
         LocalDateTime dueDateTime = LocalDateTime.now().minusHours(1); // Past due
         when(task.getDueDateTime()).thenReturn(dueDateTime);
+        when(task.getStatus()).thenReturn(TaskStatus.NOT_DONE);
 
         boolean result = strategy.shouldUpdate(task);
 

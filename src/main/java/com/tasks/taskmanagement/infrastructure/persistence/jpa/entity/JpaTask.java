@@ -6,6 +6,9 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
+/**
+ * JPA entity class representing a Task in the database.
+ */
 @Entity
 @Table(name = "tasks")
 public class JpaTask implements Task {

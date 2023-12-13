@@ -3,12 +3,15 @@ package com.tasks.integration.taskmanagement.infrastructure.persistence.jpa.adap
 import com.tasks.taskmanagement.domain.entity.Task;
 import com.tasks.taskmanagement.domain.entity.TaskImpl;
 import com.tasks.taskmanagement.domain.repository.TaskRepository;
+import com.tasks.taskmanagement.domain.valueobject.IPage;
+import com.tasks.taskmanagement.domain.valueobject.PageableImpl;
 import com.tasks.taskmanagement.domain.valueobject.TaskStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class JpaTaskRepositoryAdapterIntegrationTest {
 
     @Autowired
@@ -70,10 +74,10 @@ public class JpaTaskRepositoryAdapterIntegrationTest {
         taskRepository.saveAll(List.of(task1, task2, task3));
 
         // Find tasks with status "NOT_DONE"
-        List<Task> notDoneTasks = taskRepository.findByStatus(TaskStatus.NOT_DONE);
+        IPage<Task> notDoneTasks = taskRepository.findByStatus(new PageableImpl(0,10),TaskStatus.NOT_DONE);
 
         // Verify that tasks with the expected status were returned
-        assertEquals(2, notDoneTasks.size());
-        assertTrue(notDoneTasks.stream().allMatch(task -> task.getStatus() == TaskStatus.NOT_DONE));
+        assertEquals(2, notDoneTasks.getContent().size());
+        assertTrue(notDoneTasks.getContent().stream().allMatch(task -> task.getStatus() == TaskStatus.NOT_DONE));
     }
 }

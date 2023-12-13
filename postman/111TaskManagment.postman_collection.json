@@ -62,7 +62,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"description\": \"3333\",\n    \"creationDateTime\": \"2023-12-08T19:57:10.558208\",\n    \"dueDateTime\": null,\n    \"completionDateTime\": \"2023-12-08T19:57:10.558208\",\n    \"status\": null\n}"
+							"raw": "{\n    \"id\": 1,\n    \"description\": \"333\",\n    \"creationDateTime\": \"2023-12-08T19:57:10.558208\",\n    \"dueDateTime\": \"2023-12-13T21:19:20.558208\",\n    \"completionDateTime\": \"2023-12-08T19:57:10.558208\",\n    \"status\": \"DONE\"\n    // \"status\": \"DONE\"\n    // \"status\": \"NOT_DONE\"\n    // \"status\": \"PAST_DUE\"\n}"
 						},
 						"url": {
 							"raw": "http://localhost:8087/api/tasks/1",
@@ -93,7 +93,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"completionDateTime\": \"2023-12-08T19:57:10.558208\"\n}"
+							"raw": "{\n    \"description\": \"22222\"\n    // \"creationDateTime\": \"2023-12-08T19:57:10.558208\",\n    // \"dueDateTime\": \"2023-12-20T21:19:20.558208\",\n    // \"completionDateTime\": \"2024-12-08T19:57:10.558208\",\n    // \"status\": \"NOT_DONE\"\n    // \"status\": \"DONE\"\n    // \"status\": \"NOT_DONE\"\n    // \"status\": \"PAST_DUE\"\n}"
 						},
 						"url": {
 							"raw": "http://localhost:8087/api/tasks/1",
@@ -123,37 +123,18 @@
 					"response": []
 				},
 				{
-					"name": "addWithStatus",
+					"name": "getByStatusId",
 					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"description\": \"22222\",\n    \"creationDateTime\": \"2023-12-08T19:57:10.558208\",\n    \"dueDateTime\": null,\n    \"completionDateTime\": \"2023-12-08T19:57:10.558208\",\n    \"status\": null\n}"
-						},
+						"method": "GET",
+						"header": [],
 						"url": {
-							"raw": "http://localhost:8087/api/tasks",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8087",
-							"path": [
-								"api",
-								"tasks"
-							]
+							"raw": ""
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "getByStatusId",
+					"name": "pagination",
 					"request": {
 						"method": "GET",
 						"header": [],

@@ -14,15 +14,19 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * The TaskStatusUpdaterImpl class implements the TaskStatusUpdater interface.
+ * It is responsible for updating the status of tasks based on a specific strategy.
+ */
 @Slf4j
 @Service
-public class TaskStatusUpdaterImpl implements TaskStatusUpdater{
+public class TaskStatusUpdaterImpl implements TaskStatusUpdater {
+
     private final StatusUpdateStrategy statusUpdateStrategy;
     private final TaskRepository taskRepository;
 
     @Value("${statusupdater.batch.size}")
     private int batchSize;
-
 
     @Autowired
     public TaskStatusUpdaterImpl(StatusUpdateStrategy pastDueStatusUpdateStrategy, TaskRepository taskRepository) {
@@ -30,23 +34,31 @@ public class TaskStatusUpdaterImpl implements TaskStatusUpdater{
         this.taskRepository = taskRepository;
     }
 
+    /**
+     * Update the status of a specific task based on the defined strategy.
+     *
+     * @param task The task to update the status for.
+     */
     public void updateStatus(Task task) {
-        log.info("Task status updated to PAST_DUE for task with ID: {}", task.getId());
         if (statusUpdateStrategy.shouldUpdate(task)) {
             task.setStatus(TaskStatus.PAST_DUE);
             log.info("Task status updated to PAST_DUE for task with ID: {}", task.getId());
         }
     }
 
+    /**
+     * Update the status of all eligible tasks based on the defined strategy.
+     * The method retrieves tasks that meet the criteria and updates their status in batches.
+     */
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public void updateStatusAll(){
+    public void updateStatusAll() {
         List<Task> tasks = taskRepository
-                .findByStatusAndDueDateTimeBefore(TaskStatus.NOT_DONE, LocalDateTime.now(), batchSize);;
+                .findByStatusAndDueDateTimeBefore(TaskStatus.NOT_DONE, LocalDateTime.now(), batchSize);
         tasks.forEach(this::updateStatus);
-        if(!tasks.isEmpty()){
+        if (!tasks.isEmpty()) {
             taskRepository.saveAll(tasks);
             log.info("Updated status for {} tasks to PAST_DUE.", tasks.size());
-        }else {
+        } else {
             log.info("There are no tasks to update the status.");
         }
     }

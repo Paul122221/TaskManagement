@@ -2,7 +2,7 @@ package com.tasks.taskmanagement.infrastructure.persistence.jpa.adapter;
 
 import com.tasks.taskmanagement.domain.entity.Task;
 import com.tasks.taskmanagement.domain.repository.TaskRepository;
-import com.tasks.taskmanagement.domain.valueobject.TaskStatus;
+import com.tasks.taskmanagement.domain.valueobject.*;
 import com.tasks.taskmanagement.infrastructure.persistence.jpa.entity.JpaTask;
 import com.tasks.taskmanagement.infrastructure.persistence.jpa.mapper.TaskMapper;
 import com.tasks.taskmanagement.infrastructure.persistence.jpa.repository.JpaTaskRepository;
@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Adapter class that implements the TaskRepository interface for JPA-based task persistence.
+ */
 @Repository
 public class JpaTaskRepositoryAdapter implements TaskRepository {
 
@@ -39,8 +42,10 @@ public class JpaTaskRepositoryAdapter implements TaskRepository {
     }
 
     @Override
-    public List<Task> findAll() {
-        return new ArrayList<>(jpaTaskRepository.findAll());
+    public IPage<Task> findAll(IPageable pageable) {
+        Page<Task> result = jpaTaskRepository.findAll(PageRequest.of(pageable.getPage(), pageable.getSize()))
+                .map(e -> (Task) e);
+        return new PageImpl<>(result.getContent(),result.getTotalElements(),result.getNumber(),result.getSize());
     }
 
     @Override
@@ -64,10 +69,12 @@ public class JpaTaskRepositoryAdapter implements TaskRepository {
         return new JpaTask();
     }
 
-
     @Override
-    public List<Task> findByStatus(TaskStatus status) {
-        return new ArrayList<>(jpaTaskRepository.findByStatus(status));
+    public IPage<Task> findByStatus(IPageable pageable, TaskStatus status) {
+        Page<Task> result = jpaTaskRepository
+                .findByStatus(status, PageRequest.of(pageable.getPage(), pageable.getSize()))
+                .map(e -> (Task) e);
+        return new PageImpl<>(result.getContent(),result.getTotalElements(),result.getNumber(),result.getSize());
     }
 
     @Override
