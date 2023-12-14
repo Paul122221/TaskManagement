@@ -27,8 +27,6 @@ public class TaskStatusUpdateSchedulerImpl implements TaskStatusUpdateScheduler 
      */
     @Scheduled(cron = "${statusupdater.scheduling.taskStatusUpdateCron}")
     public void updateTaskStatuses() {
-        log.info("Starting task status update...");
         statusUpdater.updateStatusAll();
-        log.info("Task status update completed.");
     }
 }

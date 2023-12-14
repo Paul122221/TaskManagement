@@ -4,6 +4,7 @@ import com.tasks.taskmanagement.application.spring.service.statusupdate.TaskStat
 import com.tasks.taskmanagement.domain.entity.Task;
 import com.tasks.taskmanagement.domain.entity.TaskImpl;
 import com.tasks.taskmanagement.domain.repository.TaskRepository;
+import com.tasks.taskmanagement.domain.service.TaskService;
 import com.tasks.taskmanagement.domain.strategy.StatusUpdateStrategy;
 import com.tasks.taskmanagement.domain.valueobject.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,10 +33,13 @@ public class TaskStatusUpdaterImplTest {
     @Mock
     private TaskRepository taskRepository;
 
+    @Mock
+    private TaskService taskService;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-        taskStatusUpdater = new TaskStatusUpdaterImpl(statusUpdateStrategy, taskRepository);
+        taskStatusUpdater = new TaskStatusUpdaterImpl(statusUpdateStrategy, taskService);
     }
 
     @Test
@@ -66,20 +70,18 @@ public class TaskStatusUpdaterImplTest {
         List<Task> tasks = new ArrayList<>();
         Task task1 = new TaskImpl("Undefined", LocalDateTime.now().minusSeconds(5));
         task1.setStatus(TaskStatus.NOT_DONE);
-        task1.setDueDateTime(LocalDateTime.now().minusSeconds(3));
+        task1.setDueDateTime(LocalDateTime.now().minusMinutes(3));
         tasks.add(task1);
 
         Task task2 = new TaskImpl("Undefined", LocalDateTime.now().minusSeconds(5));
         task2.setStatus(TaskStatus.NOT_DONE);
-        task2.setDueDateTime(LocalDateTime.now().minusSeconds(3));
+        task2.setDueDateTime(LocalDateTime.now().minusMinutes(3));
         tasks.add(task2);
-
-        when(taskRepository.findByStatusAndDueDateTimeBefore(any(TaskStatus.class),any(LocalDateTime.class),anyInt())).thenReturn(tasks);
         when(statusUpdateStrategy.shouldUpdate(any(Task.class))).thenReturn(true);
 
-        taskStatusUpdater.updateStatusAll();
+        taskStatusUpdater.updateStatus(task1);
+        taskStatusUpdater.updateStatus(task2);
 
-        verify(taskRepository).findByStatusAndDueDateTimeBefore(any(TaskStatus.class),any(LocalDateTime.class),anyInt());
         assertEquals(TaskStatus.PAST_DUE, task1.getStatus());
         assertEquals(TaskStatus.PAST_DUE, task2.getStatus());
     }
@@ -94,26 +96,13 @@ public class TaskStatusUpdaterImplTest {
         task2.setStatus(TaskStatus.NOT_DONE);
         tasks.add(task2);
 
-        when(taskRepository.findByStatusAndDueDateTimeBefore(any(TaskStatus.class),any(LocalDateTime.class),anyInt())).thenReturn(tasks);
         when(statusUpdateStrategy.shouldUpdate(any(Task.class))).thenReturn(false);
 
-        taskStatusUpdater.updateStatusAll();
+        taskStatusUpdater.updateStatus(task1);
+        taskStatusUpdater.updateStatus(task2);
 
-        verify(taskRepository).findByStatusAndDueDateTimeBefore(any(TaskStatus.class),any(LocalDateTime.class),anyInt());
         assertEquals(TaskStatus.NOT_DONE, task1.getStatus());
         assertEquals(TaskStatus.NOT_DONE, task2.getStatus());
     }
 
-    @Test
-    void updateStatusAll_ShouldNotUpdateStatus_WhenNoTasksAreNotDone() {
-        List<Task> tasks = new ArrayList<>();
-
-        when(taskRepository.findByStatusAndDueDateTimeBefore(any(TaskStatus.class),any(LocalDateTime.class),anyInt())).thenReturn(tasks);
-        when(statusUpdateStrategy.shouldUpdate(any(Task.class))).thenReturn(true);
-
-        taskStatusUpdater.updateStatusAll();
-
-        verify(taskRepository).findByStatusAndDueDateTimeBefore(any(TaskStatus.class),any(LocalDateTime.class),anyInt());
-        verify(taskRepository, never()).saveAll(tasks);
-    }
 }

@@ -46,10 +46,14 @@ Several tests have been created for validating these rules, located in:
 Additional unit and integration tests are also included in the system.
 
 #### 3. Task Status Updates
-Task status updates can be configured in `application.properties`, allowing the user to specify the number of tasks updated at a time and the schedule for updates. For example:
-- Task update cron: `*/60 * * * * *` (every 60 seconds)
-- Update type: `custom`
-- Batch size: `10000`
+The task status is updated every minute, as users usually account for a second's margin of error.
+As a result, I have a scheduler that updates all tasks every minute, and it does so with a JPQL update query, in which it updates and affects only records that require updating.
+
+`UPDATE JpaTask t SET t.status = :newStatus WHERE t.status = :oldStatus AND t.dueDateTime < :currentTimestamp`
+
+application.properties(every 60 seconds)
+
+`statusupdater.scheduling.taskStatusUpdateCron=*/60 * * * * *`
 
 Updates are handled by `com.tasks.taskmanagement.application.spring.service.statusupdate.TaskStatusUpdateSchedulerImpl`.
 

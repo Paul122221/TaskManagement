@@ -12,6 +12,7 @@ import com.tasks.taskmanagement.domain.valueobject.TaskStatus;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +30,6 @@ public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
     private final TaskValidator compositForDeleteTaskValidator;
-    private final TaskStatusUpdater taskStatusUpdater;
     private final StatusUpdateStrategy statusUpdateStrategy;
     private final TaskValidator compositForSave;
 
@@ -37,11 +37,9 @@ public class TaskServiceImpl implements TaskService {
     public TaskServiceImpl(TaskRepository taskRepository,
                            @Qualifier("compositForDeleteTaskValidator") TaskValidator compositForDeleteTaskValidator,
                            @Qualifier("compositForSave") TaskValidator compositForSave,
-                           TaskStatusUpdater taskStatusUpdater,
                            StatusUpdateStrategy statusUpdateStrategy) {
         this.taskRepository = taskRepository;
         this.compositForDeleteTaskValidator = compositForDeleteTaskValidator;
-        this.taskStatusUpdater = taskStatusUpdater;
         this.statusUpdateStrategy = statusUpdateStrategy;
         this.compositForSave = compositForSave;
     }
@@ -76,20 +74,7 @@ public class TaskServiceImpl implements TaskService {
      */
     @Override
     public IPage<Task> findAll(IPageable pageable) {
-        IPage<Task> tasks = taskRepository.findAll(pageable);
-        List<Task> content = tasks.getContent();
-        List<Task> updatedTasks = new ArrayList<>();
-
-        for (Task task : content) {
-            if (statusUpdateStrategy.shouldUpdate(task)) {
-                taskStatusUpdater.updateStatus(task);
-                updatedTasks.add(task);
-            }
-        }
-        if (!updatedTasks.isEmpty()) {
-            taskRepository.saveAll(updatedTasks);
-        }
-        return tasks;
+        return taskRepository.findAll(pageable);
     }
 
     /**
@@ -101,16 +86,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public Optional<Task> findById(Long id) {
-        Optional<Task> optionalTask = taskRepository.findById(id);
-        if (optionalTask.isPresent()) {
-            Task task = optionalTask.get();
-            if (statusUpdateStrategy.shouldUpdate(task)) {
-                taskStatusUpdater.updateStatus(task);
-                this.saveAll(List.of(task));
-                taskRepository.save(task);
-            }
-        }
-        return optionalTask;
+        return taskRepository.findById(id);
     }
 
     /**
@@ -170,5 +146,18 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> findByStatusAndDueDateTimeBefore(TaskStatus status, LocalDateTime currentTime, int count) {
         return taskRepository.findByStatusAndDueDateTimeBefore(status, currentTime, count);
+    }
+
+
+    /**
+     * Updates the status of tasks that meet the specified criteria.
+     *
+     * @param oldStatus        The old status of tasks to be updated.
+     * @param newStatus        The new status to set for the tasks.
+     * @param currentTimestamp The timestamp used for comparison with the dueDateTime field of tasks.
+     */
+    @Override
+    public void updateStatusForDueDateTimeAndOldStatus(TaskStatus oldStatus, TaskStatus newStatus, LocalDateTime currentTimestamp) {
+        taskRepository.updateStatusForDueDateTimeAndOldStatus(oldStatus,newStatus,currentTimestamp);
     }
 }

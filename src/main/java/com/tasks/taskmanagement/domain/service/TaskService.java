@@ -4,6 +4,8 @@ import com.tasks.taskmanagement.domain.entity.Task;
 import com.tasks.taskmanagement.domain.valueobject.IPage;
 import com.tasks.taskmanagement.domain.valueobject.IPageable;
 import com.tasks.taskmanagement.domain.valueobject.TaskStatus;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -83,4 +85,15 @@ public interface TaskService {
      * @return A list of tasks with the specified status and due date/time before the current time.
      */
     List<Task> findByStatusAndDueDateTimeBefore(TaskStatus status, LocalDateTime currentTime, int count);
+
+    /**
+     * Updates the status of tasks that meet the specified criteria.
+     *
+     * @param oldStatus        The old status of tasks to be updated.
+     * @param newStatus        The new status to set for the tasks.
+     * @param currentTimestamp The timestamp used for comparison with the dueDateTime field of tasks.
+     */
+    void updateStatusForDueDateTimeAndOldStatus(TaskStatus oldStatus,
+                                               TaskStatus newStatus,
+                                               LocalDateTime currentTimestamp);
 }

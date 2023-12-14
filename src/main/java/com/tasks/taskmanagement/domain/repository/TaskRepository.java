@@ -83,4 +83,15 @@ public interface TaskRepository {
      * @return A list of tasks with the specified status and due date/time before the current time.
      */
     List<Task> findByStatusAndDueDateTimeBefore(TaskStatus status, LocalDateTime currentTime, int count);
+
+    /**
+     * Updates the status of tasks that meet the specified criteria.
+     *
+     * @param oldStatus        The old status of tasks to be updated.
+     * @param newStatus        The new status to set for the tasks.
+     * @param currentTimestamp The timestamp used for comparison with the dueDateTime field of tasks.
+     */
+    void updateStatusForDueDateTimeAndOldStatus(TaskStatus oldStatus,
+                                               TaskStatus newStatus,
+                                               LocalDateTime currentTimestamp);
 }

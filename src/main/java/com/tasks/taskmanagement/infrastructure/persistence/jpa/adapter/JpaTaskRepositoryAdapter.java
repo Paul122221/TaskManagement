@@ -83,4 +83,20 @@ public class JpaTaskRepositoryAdapter implements TaskRepository {
                 .findByStatusAndDueDateTimeBefore(status, currentTime, PageRequest.of(0, count));
         return new ArrayList<>(tasks.stream().toList());
     }
+
+    /**
+     * Updates the status of tasks that meet the specified criteria.
+     *
+     * @param oldStatus        The old status of tasks to be updated.
+     * @param newStatus        The new status to set for the tasks.
+     * @param currentTimestamp The timestamp used for comparison with the dueDateTime field of tasks.
+     */
+    @Override
+    public void updateStatusForDueDateTimeAndOldStatus(TaskStatus oldStatus, TaskStatus newStatus, LocalDateTime currentTimestamp) {
+
+        jpaTaskRepository.updateStatusForDueDateTimeAndOldStatus(oldStatus,
+                newStatus,
+                currentTimestamp
+                );
+    }
 }
